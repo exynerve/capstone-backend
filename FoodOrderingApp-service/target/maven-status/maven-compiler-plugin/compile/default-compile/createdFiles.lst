@@ -2,12 +2,14 @@ com\upgrad\FoodOrderingApp\service\exception\CouponNotFoundException.class
 com\upgrad\FoodOrderingApp\service\exception\ItemNotFoundException.class
 com\upgrad\FoodOrderingApp\service\exception\AuthenticationFailedException.class
 com\upgrad\FoodOrderingApp\service\entity\AddressEntity.class
+com\upgrad\FoodOrderingApp\service\dao\CustomerDao.class
 com\upgrad\FoodOrderingApp\service\businness\PasswordCryptographyProvider.class
 com\upgrad\FoodOrderingApp\service\entity\CategoryItemEntity.class
 com\upgrad\FoodOrderingApp\service\entity\PaymentEntity.class
 com\upgrad\FoodOrderingApp\service\exception\PaymentMethodNotFoundException.class
 com\upgrad\FoodOrderingApp\service\entity\CustomerEntity.class
 com\upgrad\FoodOrderingApp\service\exception\UpdateCustomerException.class
+com\upgrad\FoodOrderingApp\service\businness\CustomerSignupService.class
 com\upgrad\FoodOrderingApp\service\entity\ItemEntity.class
 com\upgrad\FoodOrderingApp\service\exception\SignUpRestrictedException.class
 com\upgrad\FoodOrderingApp\service\exception\SaveAddressException.class

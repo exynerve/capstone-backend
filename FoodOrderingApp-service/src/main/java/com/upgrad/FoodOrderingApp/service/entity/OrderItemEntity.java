@@ -22,12 +22,12 @@ public class OrderItemEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToMany
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "order_id")
     @NotNull
     private OrdersEntity orders;
 
-    @OneToMany
+    @OneToOne
     @JoinColumn(name="item_id")
     @NotNull
     private ItemEntity item;

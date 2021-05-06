@@ -28,7 +28,7 @@ public class CustomerAddressEntity implements Serializable{
     private CustomerEntity customer;
 
     @OneToOne
-    @Column(name="address_id")
+    @JoinColumn(name="address_id")
     private AddressEntity address;
 
     public Integer getId() {

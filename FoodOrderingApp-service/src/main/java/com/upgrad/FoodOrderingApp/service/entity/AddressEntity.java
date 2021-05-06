@@ -43,7 +43,7 @@ public class AddressEntity implements Serializable{
     @Size(max = 30)
     private String pincode;
 
-    @ManyToOne
+    @ManyToOne (cascade = CascadeType.ALL)
     @JoinColumn(name="state_id")
     @NotNull
     private StateEntity state;

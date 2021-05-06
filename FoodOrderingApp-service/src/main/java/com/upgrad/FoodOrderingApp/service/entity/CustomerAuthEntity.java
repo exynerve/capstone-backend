@@ -27,7 +27,7 @@ public class CustomerAuthEntity implements Serializable{
     @Size(max = 200)
     private String uuid;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="customer_id")
     @NotNull
     private CustomerEntity customer;

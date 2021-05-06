@@ -16,6 +16,12 @@ import java.time.ZonedDateTime;
 @Entity
 @Table(name="customer")
 
+@NamedQueries(
+        {
+                @NamedQuery(name = "customerByContactNumber", query = "select c from CustomerEntity c where c.contactNumber = :contactNumber")
+        }
+)
+
 public class CustomerEntity implements Serializable{
     @Id
     @Column(name="id")                  //id
@@ -32,7 +38,6 @@ public class CustomerEntity implements Serializable{
     private String firstName;
 
     @Column(name = "lastname")          //lastname
-    @NotNull
     @Size(max = 30)
     private String lastName;
 
@@ -41,7 +46,7 @@ public class CustomerEntity implements Serializable{
     @Size(max = 50)
     private String email;
 
-    @Column(name = "contactnumber")     //contact_number
+    @Column(name = "contact_number")     //contact_number
     @Size(max = 30)
     private String contactNumber;
 
@@ -56,6 +61,7 @@ public class CustomerEntity implements Serializable{
     @Size(max = 255)
     //@ToStringExclude
     private String salt;
+
 
     public Integer getId() {
         return id;

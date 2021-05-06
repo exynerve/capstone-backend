@@ -28,7 +28,7 @@ public class RestaurantItemEntity implements Serializable{
     @NotNull
     private ItemEntity item;
 
-    @OneToMany
+    @ManyToOne (cascade = CascadeType.ALL)
     @JoinColumn(name="restaurant_id")
     @NotNull
     private RestaurantEntity restaurant;

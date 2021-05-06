@@ -49,7 +49,7 @@ public class OrdersEntity implements Serializable{
     @JoinColumn(name="payment_id")
     private PaymentEntity payment;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="customer_id")
     private CustomerEntity customer;
 
