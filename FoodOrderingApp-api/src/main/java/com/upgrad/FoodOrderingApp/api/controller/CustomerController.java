@@ -4,6 +4,9 @@ import com.upgrad.FoodOrderingApp.api.model.SignupCustomerRequest;
 import com.upgrad.FoodOrderingApp.api.model.SignupCustomerResponse;
 import com.upgrad.FoodOrderingApp.api.model.LoginResponse;
 import com.upgrad.FoodOrderingApp.api.model.LogoutResponse;
+import com.upgrad.FoodOrderingApp.api.model.UpdateCustomerRequest;
+import com.upgrad.FoodOrderingApp.api.model.UpdateCustomerResponse;
+
 import com.upgrad.FoodOrderingApp.service.exception.*;
 
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
@@ -102,5 +105,29 @@ public class CustomerController {
         return new ResponseEntity<LogoutResponse>(logoutResponse, HttpStatus.OK);
     }
 
+
+    @RequestMapping(method = RequestMethod.PUT, path = "/customer", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<UpdateCustomerResponse> updateCustomer(@RequestHeader("authorization") final String accessToken,
+                                                                 final UpdateCustomerRequest updateCustomerRequest)
+            throws UpdateCustomerException, AuthorizationFailedException {
+
+        if(updateCustomerRequest.getFirstName() == null || updateCustomerRequest.getFirstName()==" "){
+            throw new UpdateCustomerException("UCR-002", "First name field should not be empty");
+        }
+        String firstName = updateCustomerRequest.getFirstName();
+        String lastName= updateCustomerRequest.getLastName();
+
+        CustomerEntity customerEntity = customerService.updateCustomer(accessToken,firstName,lastName);
+        String userId = customerEntity.getUuid();
+
+        UpdateCustomerResponse updateCustomerResponse = new UpdateCustomerResponse();
+        updateCustomerResponse.setId(userId);
+        updateCustomerResponse.setStatus("CUSTOMER DETAILS UPDATED SUCCESSFULLY");
+        updateCustomerResponse.setFirstName(firstName);
+        updateCustomerResponse.setLastName(lastName);
+
+        return new ResponseEntity<UpdateCustomerResponse>(updateCustomerResponse,HttpStatus.OK);
+
+    }
 
 }
