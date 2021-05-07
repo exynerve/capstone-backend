@@ -6,6 +6,8 @@ import com.upgrad.FoodOrderingApp.api.model.LoginResponse;
 import com.upgrad.FoodOrderingApp.api.model.LogoutResponse;
 import com.upgrad.FoodOrderingApp.api.model.UpdateCustomerRequest;
 import com.upgrad.FoodOrderingApp.api.model.UpdateCustomerResponse;
+import com.upgrad.FoodOrderingApp.api.model.UpdatePasswordRequest;
+import com.upgrad.FoodOrderingApp.api.model.UpdatePasswordResponse;
 
 import com.upgrad.FoodOrderingApp.service.exception.*;
 
@@ -96,17 +98,17 @@ public class CustomerController {
     public ResponseEntity<LogoutResponse> Logout(@RequestHeader("authorization") final String authorization) throws AuthorizationFailedException {
 
         CustomerEntity customerEntity = customerService.logout(authorization);
-        String userId = customerEntity.getUuid();
+        String uuid = customerEntity.getUuid();
 
         LogoutResponse logoutResponse = new LogoutResponse();
-        logoutResponse.setId(userId);
+        logoutResponse.setId(uuid);
         logoutResponse.setMessage("Logged OUT SUCCESSFULLY");
 
         return new ResponseEntity<LogoutResponse>(logoutResponse, HttpStatus.OK);
     }
 
 
-    @RequestMapping(method = RequestMethod.PUT, path = "/customer", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @RequestMapping(method = RequestMethod.PUT, path = "/update", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<UpdateCustomerResponse> updateCustomer(@RequestHeader("authorization") final String accessToken,
                                                                  final UpdateCustomerRequest updateCustomerRequest)
             throws UpdateCustomerException, AuthorizationFailedException {
@@ -118,16 +120,39 @@ public class CustomerController {
         String lastName= updateCustomerRequest.getLastName();
 
         CustomerEntity customerEntity = customerService.updateCustomer(accessToken,firstName,lastName);
-        String userId = customerEntity.getUuid();
+        String uuid = customerEntity.getUuid();
 
         UpdateCustomerResponse updateCustomerResponse = new UpdateCustomerResponse();
-        updateCustomerResponse.setId(userId);
+        updateCustomerResponse.setId(uuid);
         updateCustomerResponse.setStatus("CUSTOMER DETAILS UPDATED SUCCESSFULLY");
+      //  updateCustomerResponse.setStatus("201");
         updateCustomerResponse.setFirstName(firstName);
         updateCustomerResponse.setLastName(lastName);
 
         return new ResponseEntity<UpdateCustomerResponse>(updateCustomerResponse,HttpStatus.OK);
+    }
 
+
+    @RequestMapping(method = RequestMethod.PUT, path = "/password", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<UpdatePasswordResponse> changeCustomerPassword(@RequestHeader("authorization") final String accessToken,
+                                                                 final UpdatePasswordRequest updatePasswordRequest)
+            throws UpdateCustomerException, AuthorizationFailedException {
+
+        if(updatePasswordRequest.getNewPassword()== null || updatePasswordRequest.getNewPassword()== " " ||
+           updatePasswordRequest.getOldPassword()==null ||  updatePasswordRequest.getOldPassword()== " "){
+            throw new UpdateCustomerException("UCR-003","No field should be empty");
+        }
+            String oldPassword = updatePasswordRequest.getOldPassword();
+            String newPassword = updatePasswordRequest.getNewPassword();
+            CustomerEntity customerEntity = customerService.updatePassword(accessToken, oldPassword, newPassword);
+
+            String uuid = customerEntity.getUuid();
+
+            UpdatePasswordResponse updatePasswordResponse =  new UpdatePasswordResponse();
+            updatePasswordResponse.setId(uuid);
+            updatePasswordResponse.setStatus("CUSTOMER PASSWORD UPDATED SUCCESSFULLY");
+
+            return new ResponseEntity<UpdatePasswordResponse>(updatePasswordResponse, HttpStatus.OK);
     }
 
 }

@@ -83,7 +83,9 @@ public class CustomerService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public CustomerEntity updateCustomer(String accessToken, String firstName, String lastName) throws UpdateCustomerException, AuthorizationFailedException{
+    public CustomerEntity updateCustomer(String accessToken, String firstName, String lastName)
+            throws UpdateCustomerException, AuthorizationFailedException{
+
         CustomerAuthEntity customerAuthEntity = customerDao.getCustomerAuthByToken(accessToken);
 
         if(customerAuthEntity == null) {
@@ -109,5 +111,71 @@ public class CustomerService {
 
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
+    public CustomerEntity updatePassword(String accessToken, String oldPassword, String newPassword)
+            throws UpdateCustomerException, AuthorizationFailedException{
+
+        CustomerAuthEntity customerAuthEntity = customerDao.getCustomerAuthByToken(accessToken);
+
+        if(customerAuthEntity == null) {
+            throw new AuthorizationFailedException("ATHR-001","Customer is not Logged in.");
+        }
+
+        if(customerAuthEntity.getLogoutAt() != null){
+            throw new AuthorizationFailedException("ATHR-002","Customer is logged out. Log in again to access this endpoint.");
+        }
+
+        final ZonedDateTime now = ZonedDateTime.now();
+
+        if((customerAuthEntity.getExpiresAt().compareTo(now)) < 0){
+            throw new AuthorizationFailedException("ATHR-003","Your session is expired. Log in again to access this endpoint.");
+        }
+
+        if(!checkPasswordStrength(newPassword)){
+            throw new UpdateCustomerException("UCR-001", "Weak password!");
+        }
+
+        CustomerEntity customerEntity = customerAuthEntity.getCustomer();
+
+        String encryptedOldPassword = cryptographyProvider.encrypt(oldPassword,customerEntity.getSalt());
+
+        if(encryptedOldPassword.compareTo(customerEntity.getPassword()) != 0){
+            throw new UpdateCustomerException("UCR-004", "Incorrect old password!");
+        }
+
+        customerEntity.setPassword(newPassword);
+
+        CustomerEntity updatedCustomer  = customerDao.updateCustomerEntity(customerEntity);
+        return updatedCustomer;
+    }
+
+
+    private boolean checkPasswordStrength(String password){
+        if (password.length()<8)
+            return false;
+
+        boolean hasNumber = false;
+        boolean hasCaps = false;
+        boolean hasSplChar = false;
+        Set<Character> splChar = new HashSet<Character>();
+        Character[] A= {'#', '@','$','%','&','*','!','^' };
+        splChar.addAll(Arrays.asList(A));
+
+        for(int i=0; i<password.length(); i++){
+            if(password.charAt(i)>='A' && password.charAt(i)<='Z'){
+                hasCaps= true;
+            }
+            if((int)password.charAt(i)>=48 && (int)password.charAt(i)<=57)
+                hasNumber= true;
+            
+            if (splChar.contains(password.charAt(i)))
+                hasSplChar = true;
+        }
+
+        if(hasNumber && hasCaps && hasSplChar)
+            return true;
+        else
+            return false;
+    }
 }
 

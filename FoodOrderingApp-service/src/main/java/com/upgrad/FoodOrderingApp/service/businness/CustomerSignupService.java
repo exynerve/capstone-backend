@@ -106,7 +106,7 @@ public class CustomerSignupService {
             }
             if((int)password.charAt(i)>=48 && (int)password.charAt(i)<=57)
                 hasNumber= true;
-            //if(password.charAt(i)== ('[' || '#' || '@' || '$' || '%'|| '&' || '*' || '!' || '^' || ']'))
+
             if (splChar.contains(password.charAt(i)))
                 hasSplChar = true;
         }
