@@ -40,4 +40,21 @@ public class CustomerDao {
             return null;
         }
     }
+
+    public CustomerAuthEntity getCustomerAuthByToken(String accessToken){
+        try{
+            return entityManager.createNamedQuery("customerAuthByToken", CustomerAuthEntity.class).setParameter("accessToken",accessToken).getSingleResult();
+        }catch(NoResultException nre){
+            return null;
+        }
+    }
+
+    public CustomerAuthEntity updateLogoutTime(final CustomerAuthEntity customerAuth){
+        try {
+            entityManager.merge(customerAuth);
+            return customerAuth;
+        }catch (NoResultException nre){
+            return null;
+        }
+    }
 }
