@@ -143,7 +143,9 @@ public class CustomerService {
             throw new UpdateCustomerException("UCR-004", "Incorrect old password!");
         }
 
-        customerEntity.setPassword(newPassword);
+        String[] encryptedText = cryptographyProvider.encrypt(newPassword);
+        customerEntity.setSalt(encryptedText[0]);
+        customerEntity.setPassword(encryptedText[1]);
 
         CustomerEntity updatedCustomer  = customerDao.updateCustomerEntity(customerEntity);
         return updatedCustomer;
@@ -167,7 +169,7 @@ public class CustomerService {
             }
             if((int)password.charAt(i)>=48 && (int)password.charAt(i)<=57)
                 hasNumber= true;
-            
+
             if (splChar.contains(password.charAt(i)))
                 hasSplChar = true;
         }

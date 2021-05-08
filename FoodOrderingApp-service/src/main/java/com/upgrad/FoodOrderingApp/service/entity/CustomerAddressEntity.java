@@ -16,6 +16,13 @@ import java.time.ZonedDateTime;
 @Entity
 @Table(name="customer_address")
 
+@NamedQueries(
+        {
+                @NamedQuery(name = "getAddrByCustomerId", query = "select c from CustomerAddressEntity c  where c.customer = :customer order by id desc")
+        }
+)
+
+
 public class CustomerAddressEntity implements Serializable{
 
     @Id
@@ -23,7 +30,7 @@ public class CustomerAddressEntity implements Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToOne
+    @ManyToOne (cascade = CascadeType.ALL)
     @JoinColumn(name="customer_id")
     private CustomerEntity customer;
 

@@ -16,6 +16,13 @@ import java.time.ZonedDateTime;
 @Entity
 @Table(name="address")
 
+@NamedQueries(
+        {
+                @NamedQuery(name = "getAddressById", query = "select a from AddressEntity a  where a.id = :id order by id desc")
+        }
+)
+
+
 public class AddressEntity implements Serializable{
     @Id
     @Column(name="id")                  //id
