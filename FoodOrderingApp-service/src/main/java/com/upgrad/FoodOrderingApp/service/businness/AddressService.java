@@ -14,6 +14,7 @@ import com.upgrad.FoodOrderingApp.service.dao.CustomerDao;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -74,13 +75,49 @@ public class AddressService {
 
             addresses.add(address);
         }
-
-
-        //addresses = addressDao.getAllAddresses(customerId);
-
         return addresses;
-
     }
+
+    //deleteAddress(customerAccessToken, addressUuid);
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void deleteAddress(final String customerAccessToken, String addressUuid)
+            throws AuthorizationFailedException, AddressNotFoundException {
+
+        CustomerAuthEntity customerAuthEntity =  checkAuthorization(customerAccessToken);
+
+        CustomerEntity customer = customerAuthEntity.getCustomer();
+        List<CustomerAddressEntity> customerAddressList = new <CustomerAddressEntity> ArrayList();
+        customerAddressList = addressDao.getAllAddresses(customer);
+
+        List<AddressEntity> customerAddresses = new <AddressEntity> ArrayList();
+
+        for(CustomerAddressEntity c: customerAddressList){
+            AddressEntity addressEntity = new AddressEntity();
+            Integer addrId = c.getAddress().getId();
+            addressEntity = addressDao.getAddressById(addrId);
+
+            customerAddresses.add(addressEntity);
+        }
+
+
+
+        if(addressUuid == null || addressUuid == " "){
+            throw new AddressNotFoundException("ANF-005", "Address id can not be empty");
+        }
+
+        AddressEntity address = addressDao.getAddressByUuid(addressUuid);
+        if(address == null){
+            throw new AddressNotFoundException("ANF-003", "No address by this id");
+        }
+
+        if(!(customerAddresses.contains(address))){
+            throw new AuthorizationFailedException("ATHR-004", "You are not authorized to view/update/delete any one else's address");
+        }
+
+
+        addressDao.deleteAddress(address);
+    }
+
 
     private CustomerAuthEntity checkAuthorization(String customerAccessToken) throws AuthorizationFailedException{
 
@@ -102,6 +139,7 @@ public class AddressService {
 
         return customerAuthEntity;
     }
+
 
 
 }

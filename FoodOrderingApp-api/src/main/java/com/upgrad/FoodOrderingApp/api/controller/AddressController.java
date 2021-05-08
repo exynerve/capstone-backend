@@ -4,6 +4,7 @@ package com.upgrad.FoodOrderingApp.api.controller;
 import com.upgrad.FoodOrderingApp.api.model.AddressList;
 import com.upgrad.FoodOrderingApp.api.model.AddressListResponse;
 import com.upgrad.FoodOrderingApp.api.model.AddressListState;
+import com.upgrad.FoodOrderingApp.api.model.DeleteAddressResponse;
 import com.upgrad.FoodOrderingApp.service.businness.AddressService;
 
 import com.upgrad.FoodOrderingApp.api.model.SaveAddressRequest;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -103,6 +105,21 @@ public class AddressController {
         return new ResponseEntity<AddressListResponse>(addressListResponse, HttpStatus.FOUND);
 
     }
+
+
+    @RequestMapping(method= RequestMethod.DELETE, path ="address/{address_id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<DeleteAddressResponse> deleteAddress(@RequestHeader("authorization") final String customerAccessToken,
+                                                               @PathVariable("address_id") final String addressUuid)
+            throws AuthorizationFailedException, AddressNotFoundException {
+
+        DeleteAddressResponse deleteAddressResponse = new DeleteAddressResponse();
+        addressService.deleteAddress(customerAccessToken, addressUuid);
+        deleteAddressResponse.id(UUID.fromString(addressUuid)).status("ADDRESS_DELETED");
+        return new ResponseEntity<DeleteAddressResponse>(deleteAddressResponse, HttpStatus.OK);
+
+    }
+
+
 
         private boolean validPincode(String pincode){
             if(pincode.length() !=6)

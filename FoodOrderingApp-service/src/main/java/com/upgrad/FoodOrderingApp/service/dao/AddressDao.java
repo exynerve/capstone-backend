@@ -36,7 +36,7 @@ public class AddressDao {
         }
     }
 
-    //getAllAddresses
+    //get address by primary key value
     public AddressEntity getAddressById(Integer id) {
         try {
             return this.entityManager.createNamedQuery("getAddressById", AddressEntity.class).setParameter("id",id).getSingleResult();
@@ -61,6 +61,24 @@ public class AddressDao {
             return entityManager.createNamedQuery("getAddrByCustomerId", CustomerAddressEntity.class).setParameter("customer",customer).getResultList();
         }catch(NoResultException nre){
             return null;
+        }
+    }
+
+    //getAddressByUuid(addressUuid)
+    public AddressEntity getAddressByUuid(String uuid) {
+        try {
+            return this.entityManager.createNamedQuery("getAddressByUuId", AddressEntity.class).setParameter("uuid",uuid).getSingleResult();
+        } catch (NoResultException nre) {
+            return null;
+        }
+    }
+
+    //deleteAddress(address)
+    public void deleteAddress(AddressEntity address) {
+        try {
+            entityManager.remove(address);
+        }catch(NoResultException nre){
+            System.err.println(nre);
         }
     }
 }

@@ -18,7 +18,8 @@ import java.time.ZonedDateTime;
 
 @NamedQueries(
         {
-                @NamedQuery(name = "getAddressById", query = "select a from AddressEntity a  where a.id = :id order by id desc")
+                @NamedQuery(name = "getAddressById", query = "select a from AddressEntity a  where a.id = :id order by id desc"),
+                @NamedQuery(name = "getAddressByUuId", query = "select a from AddressEntity a  where a.uuid = :uuid")
         }
 )
 
